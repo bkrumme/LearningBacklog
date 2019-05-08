@@ -2,23 +2,20 @@
 <table class="table table-striped" *ngIf="backlogItems">
   <thead>
     <tr>
+      <th scope="col">Click to edit</th>
       <th scope="col">Title</th>
       <th scope="col">Category</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let item of backlogItems; index as i">
+      <td><button class="btn btn-primary" (click)="select(item.id)">edit</button></td>
       <td>{{item.title}}</td>
       <td>{{item.category}}</td>
     </tr>
   </tbody>
 </table>
-<br>
 
-<div>
-    <button class="btn btn-primary" (click)="create()">Create New</button>
-  </div>
+<form>
   
-<div>
-    <app-backlog-item *ngIf="showCreateForm"></app-backlog-item>
-</div>
+</form>

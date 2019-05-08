@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BacklogItem } from '../backlog-item/backlog-item';
-import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import { BacklogItemService } from '../backlog-item-service';
-import { defineBase } from '@angular/core/src/render3';
-
 
 @Component({
   selector: 'app-backlog-item-list',
@@ -12,11 +8,12 @@ import { defineBase } from '@angular/core/src/render3';
   styleUrls: ['./backlog-item-list.component.css']
 })
 export class BacklogItemListComponent implements OnInit {
-  constructor(private afs: AngularFirestore, private backlogItemService: BacklogItemService) {
+  constructor(private backlogItemService: BacklogItemService) {
   }
   editMode = false;
   showCreateForm = false;
   backlogItems: BacklogItem[];
+  selectedBacklogItem: BacklogItem;
   ngOnInit() {
     this.backlogItemService.getBacklogItems().subscribe(data => {
       this.backlogItems = data.map(e => {
@@ -39,7 +36,9 @@ export class BacklogItemListComponent implements OnInit {
   create() {
     this.showCreateForm = true;
   }
-  getBacklogItems() {
-
+  select(index: string) {
+    this.backlogItemService.getBacklogItemById(index).subscribe(data => {
+      this.selectedBacklogItem = data; });
+    console.log(this.selectedBacklogItem);
   }
 }

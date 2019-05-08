@@ -14,6 +14,9 @@ export class BacklogItemService {
   getBacklogItems() {
     return this.firestore.collection('backlogItems').snapshotChanges();
   }
+  getBacklogItemById(id: string) {
+    return this.firestore.doc<BacklogItem>('backlogItems/' + id).valueChanges();
+  }
   createBacklogItem(item) {
     this.backlogItems.add(item);
   }

@@ -1,9 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BacklogItem } from './backlog-item';
-import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { reject } from 'q';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BacklogItemService } from '../backlog-item-service';
 
 @Component({
