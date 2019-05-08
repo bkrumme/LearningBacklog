@@ -1,0 +1,24 @@
+
+<table class="table table-striped" *ngIf="backlogItems">
+  <thead>
+    <tr>
+      <th scope="col">Title</th>
+      <th scope="col">Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of backlogItems; index as i">
+      <td>{{item.title}}</td>
+      <td>{{item.category}}</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+<div>
+    <button class="btn btn-primary" (click)="create()">Create New</button>
+  </div>
+  
+<div>
+    <app-backlog-item *ngIf="showCreateForm"></app-backlog-item>
+</div>
