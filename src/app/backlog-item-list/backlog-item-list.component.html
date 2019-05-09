@@ -1,4 +1,3 @@
-
 <table class="table table-striped" *ngIf="backlogItems">
   <thead>
     <tr>
@@ -16,6 +15,27 @@
   </tbody>
 </table>
 
-<form>
-  
+<form [formGroup]="editItemForm" (ngSubmit)="update()" novalidate *ngIf="editMode">
+  <div class="form-group-row">
+    <label for="title" class="col-form-label">Title: </label>
+    <input id="title" class="form-control" type="text" formControlName="title">
+  </div>
+
+  <div class="form-group-row">
+    <label for="category">Category:</label>
+    <select id="category" formControlName="category" class="form-control">
+      <option selected>Select...</option>
+      <option *ngFor="let category of categories">{{category.displayValue}}</option>
+    </select>
+  </div>
+
+  <div class="form-group-row">
+    <label for="description" class="col-form-label">Description</label>
+    <textarea class="form-control" formControlName="description" required></textarea>
+  </div>
+
+  <div class="form-group-row">
+    <button type="submit" class="btn btn-primary" [disabled]="!editItemForm.valid">Save</button>
+    <button type="reset" class="btn btn-warn" (click)="cancel()">Cancel</button>
+  </div>
 </form>

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BacklogItem } from '../backlog-item/backlog-item';
 import { BacklogItemService } from '../backlog-item-service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-backlog-item-list',
@@ -8,12 +11,18 @@ import { BacklogItemService } from '../backlog-item-service';
   styleUrls: ['./backlog-item-list.component.css']
 })
 export class BacklogItemListComponent implements OnInit {
-  constructor(private backlogItemService: BacklogItemService) {
+  editItemForm: FormGroup;
+  constructor(private backlogItemService: BacklogItemService, private fb: FormBuilder) {
   }
   editMode = false;
   showCreateForm = false;
   backlogItems: BacklogItem[];
   selectedBacklogItem: BacklogItem;
+  categories = [
+    {value: 'discovery', displayValue: 'Discovery'},
+    {value: 'explore', displayValue: 'Explore'},
+    {value: 'deepDive', displayValue: 'Deep Dive'}
+  ];
   ngOnInit() {
     this.backlogItemService.getBacklogItems().subscribe(data => {
       this.backlogItems = data.map(e => {
@@ -24,21 +33,23 @@ export class BacklogItemListComponent implements OnInit {
       });
     });
   }
-  edit(item: BacklogItem) {
-    this.editMode = !this.editMode;
-  }
   cancel() {
     this.editMode = false;
+    this.editItemForm.reset();
   }
-  update(item: BacklogItem) {
+  update() {
     this.editMode = false;
+    this.backlogItemService.updateBacklogItem(this.editItemForm.value);
   }
-  create() {
-    this.showCreateForm = true;
-  }
-  select(index: string) {
-    this.backlogItemService.getBacklogItemById(index).subscribe(data => {
-      this.selectedBacklogItem = data; });
-    console.log(this.selectedBacklogItem);
+  select(id: string) {
+    this.backlogItemService.getBacklogItemById(id).subscribe(data => {
+      this.selectedBacklogItem = data;
+      this.editItemForm = this.fb.group({
+        title: [data.title, Validators.required],
+        category: [data.category, Validators.required],
+        description: [data.description, Validators.required]
+      });
+      this.editMode = !this.editMode;
+    });
   }
 }

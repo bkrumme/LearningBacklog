@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { BacklogItem } from './backlog-item';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BacklogItemService } from '../backlog-item-service';
 
@@ -17,7 +16,7 @@ export class BacklogItemComponent implements OnInit {
     {value: 'deepDive', displayValue: 'Deep Dive'}
   ];
   newItemForm: FormGroup;
-  constructor(private readonly afs: AngularFirestore, fb: FormBuilder, private backlogItemService: BacklogItemService) {
+  constructor(fb: FormBuilder, private backlogItemService: BacklogItemService) {
     this.newItemForm = fb.group({
       title: ['', Validators.required],
       category: ['', Validators.required],
