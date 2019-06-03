@@ -1,8 +1,0 @@
-.new-item-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.new-item-form > * {
-  width: 100%;
-}

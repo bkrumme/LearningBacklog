@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BacklogItem } from '../backlog-item/backlog-item';
+import { BacklogItem } from '../backlogItem';
 import { BacklogItemService } from '../backlog-item-service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { CategoryService } from '../category.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EditBacklogItemModalComponent } from '../edit-backlog-item-modal/edit-backlog-item-modal.component';
+import { Category } from '../category';
 
 
 @Component({
@@ -11,45 +13,52 @@ import { Observable } from 'rxjs';
   styleUrls: ['./backlog-item-list.component.css']
 })
 export class BacklogItemListComponent implements OnInit {
-  editItemForm: FormGroup;
-  constructor(private backlogItemService: BacklogItemService, private fb: FormBuilder) {
+  constructor(
+    private backlogItemService: BacklogItemService,
+    private modalService: NgbModal,
+    private categoryService: CategoryService) {
   }
-  editMode = false;
   showCreateForm = false;
   backlogItems: BacklogItem[];
   selectedBacklogItem: BacklogItem;
-  categories = [
-    {value: 'discovery', displayValue: 'Discovery'},
-    {value: 'explore', displayValue: 'Explore'},
-    {value: 'deepDive', displayValue: 'Deep Dive'}
-  ];
   ngOnInit() {
     this.backlogItemService.getBacklogItems().subscribe(data => {
-      this.backlogItems = data.map(e => {
-        return{
-          id: e.payload.doc.id,
-          ...e.payload.doc.data()
-        } as BacklogItem;
-      });
+        this.categoryService.getCategories().subscribe(cat => {
+          const categories = cat.map( c => {
+            return {
+              id: c.payload.doc.id,
+              ...c.payload.doc.data()
+            } as Category;
+          });
+          this.backlogItems = data.map(d => {
+            return {
+              id: d.payload.doc.id,
+              ...d.payload.doc.data()
+            } as BacklogItem;
+          });
+          console.log(this.backlogItems);
+          this.backlogItems.forEach((bi) => {
+            bi.category = categories.find((c) => {
+              return c.id === bi.category.id;
+            });
+          });
+        });
     });
   }
-  cancel() {
-    this.editMode = false;
-    this.editItemForm.reset();
-  }
-  update() {
-    this.editMode = false;
-    this.backlogItemService.updateBacklogItem(this.editItemForm.value);
-  }
   select(id: string) {
-    this.backlogItemService.getBacklogItemById(id).subscribe(data => {
-      this.selectedBacklogItem = data;
-      this.editItemForm = this.fb.group({
-        title: [data.title, Validators.required],
-        category: [data.category, Validators.required],
-        description: [data.description, Validators.required]
+    this.backlogItemService.getBacklogItems().subscribe(data => {
+      const items = data.map(i => {
+        return {
+          id: i.payload.doc.id,
+          ...i.payload.doc.data()
+        } as BacklogItem;
       });
-      this.editMode = !this.editMode;
+      this.selectedBacklogItem = items.find(bi => {
+        return bi.id === id;
+      });
+      console.log(this.selectedBacklogItem);
+      const modalRef = this.modalService.open(EditBacklogItemModalComponent);
+      modalRef.componentInstance.backlogItem = this.selectedBacklogItem;
     });
   }
 }

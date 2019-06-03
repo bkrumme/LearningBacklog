@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BacklogItemComponent } from './backlog-item/backlog-item.component';
 import { BacklogItemListComponent } from './backlog-item-list/backlog-item-list.component';
 import { BacklogItemService } from './backlog-item-service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,12 +14,15 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from '../environments/environment';
+import { EditBacklogItemModalComponent } from './edit-backlog-item-modal/edit-backlog-item-modal.component';
+import { NewBacklogItemComponent } from './new-backlog-item/new-backlog-item.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BacklogItemComponent,
-    BacklogItemListComponent
+    BacklogItemListComponent,
+    EditBacklogItemModalComponent,
+    NewBacklogItemComponent
   ],
   imports: [
     BrowserModule,
@@ -30,11 +32,12 @@ import { environment } from '../environments/environment';
     BrowserAnimationsModule,
     NgbModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
+    AngularFirestoreModule.enablePersistence(),
     AngularFireStorageModule,
     AngularFireDatabaseModule
   ],
   providers: [BacklogItemService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [EditBacklogItemModalComponent]
 })
 export class AppModule { }
