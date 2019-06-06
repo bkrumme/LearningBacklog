@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BacklogItemService } from '../backlog-item-service';
 import { CategoryService } from '../category.service';
 import { BacklogItem } from '../backlogItem';
 import { Category } from '../category';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-edit-backlog-item-modal',
@@ -13,6 +14,7 @@ import { Category } from '../category';
 })
 export class EditBacklogItemModalComponent implements OnInit {
   @Input() backlogItem: BacklogItem;
+  @Output() passBackItem: EventEmitter<any> = new EventEmitter();
   editItemForm: FormGroup;
   categories: Category[];
   selectedCategory: Category;
@@ -23,14 +25,11 @@ export class EditBacklogItemModalComponent implements OnInit {
               private categoryService: CategoryService) {
   }
   update() {
-    console.log(this.backlogItem);
-    this.backlogItemService.updateBacklogItem(this.backlogItem);
-    this.activeModal.close();
-  }
-  onCatChange(event: any) {
-    this.selectedCategory = this.categories.find(c => c.id === event.target.value);
-    this.backlogItem.category = this.selectedCategory;
-    console.log(this.selectedCategory);
+    const updatedItem = this.editItemForm.value;
+    updatedItem.category = this.categories.find(c => c.id === updatedItem.category);
+    this.backlogItemService.updateBacklogItem(updatedItem).then(ret => {
+      this.activeModal.close();
+    });
   }
   cancel() {
     this.editItemForm.reset();
@@ -47,10 +46,10 @@ export class EditBacklogItemModalComponent implements OnInit {
       this.selectedCategory = this.categories.find(c => c.id === this.backlogItem.category.id);
       this.editItemForm = this.fb.group({
         title: [this.backlogItem.title, [Validators.required]],
-        categories: [null, [Validators.required]],
-        description: [this.backlogItem.description, [Validators.required]]
+        category: [this.selectedCategory.id, [Validators.required]],
+        description: [this.backlogItem.description, [Validators.required]],
+        id: [this.backlogItem.id]
       });
-      this.editItemForm.get('categories').setValue(this.selectedCategory.id);
     });
   }
 }

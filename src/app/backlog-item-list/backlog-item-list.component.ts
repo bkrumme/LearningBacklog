@@ -21,10 +21,11 @@ export class BacklogItemListComponent implements OnInit {
   showCreateForm = false;
   backlogItems: BacklogItem[];
   selectedBacklogItem: BacklogItem;
+  categories: Category[];
   ngOnInit() {
     this.backlogItemService.getBacklogItems().subscribe(data => {
         this.categoryService.getCategories().subscribe(cat => {
-          const categories = cat.map( c => {
+          this.categories = cat.map( c => {
             return {
               id: c.payload.doc.id,
               ...c.payload.doc.data()
@@ -36,9 +37,8 @@ export class BacklogItemListComponent implements OnInit {
               ...d.payload.doc.data()
             } as BacklogItem;
           });
-          console.log(this.backlogItems);
           this.backlogItems.forEach((bi) => {
-            bi.category = categories.find((c) => {
+            bi.category = this.categories.find((c) => {
               return c.id === bi.category.id;
             });
           });
@@ -46,17 +46,10 @@ export class BacklogItemListComponent implements OnInit {
     });
   }
   select(id: string) {
-    this.backlogItemService.getBacklogItems().subscribe(data => {
-      const items = data.map(i => {
-        return {
-          id: i.payload.doc.id,
-          ...i.payload.doc.data()
-        } as BacklogItem;
-      });
-      this.selectedBacklogItem = items.find(bi => {
-        return bi.id === id;
-      });
-      console.log(this.selectedBacklogItem);
+    this.backlogItemService.getBacklogItemById(id).then(item => {
+      this.selectedBacklogItem = {
+        id: item.id,
+        ...item.data()} as BacklogItem;
       const modalRef = this.modalService.open(EditBacklogItemModalComponent);
       modalRef.componentInstance.backlogItem = this.selectedBacklogItem;
     });

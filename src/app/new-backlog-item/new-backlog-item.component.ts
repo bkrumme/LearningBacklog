@@ -42,7 +42,6 @@ export class NewBacklogItemComponent implements OnInit {
   onCatChange(event: any) {
     this.selectedCategory = this.categories.find(c => c.id === event.target.value);
     this.newBacklogItem.category = this.selectedCategory;
-    console.log(this.newItemForm.value);
   }
 
   add() {
